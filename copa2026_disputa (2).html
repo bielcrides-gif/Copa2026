@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disputa de Seleções — Copa 2026</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#0a7c4e;--gl:#e8f5ef;--gm:#1d9e75;--bg:#f7f6f2;--card:#fff;--border:#e2e0d8;--text:#1a1a18;--muted:#6b6b65}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+header{background:var(--green);color:#fff;padding:1.5rem 1rem 1.2rem;text-align:center}
+.ey{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9ee5c5;margin-bottom:.4rem}
+h1{font-size:1.8rem;font-weight:900;line-height:1.1;letter-spacing:-.02em}
+header p{margin-top:.5rem;font-size:14px;color:#b8e8d4}
+.sel{display:flex;align-items:center;justify-content:center;gap:.8rem;padding:1.2rem 1rem;flex-wrap:wrap}
+.sg{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px;max-width:220px}
+.sg label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+select{font-family:inherit;font-size:14px;font-weight:500;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);width:100%;-webkit-appearance:none;appearance:none}
+.vs{font-size:13px;font-weight:700;color:var(--muted);padding-top:18px}
+.sb{display:flex;align-items:center;justify-content:center;gap:1rem;padding:.8rem 1rem;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.sb-blk{display:flex;flex-direction:column;align-items:center;min-width:80px}
+.sb-nation{font-size:12px;font-weight:600;color:var(--muted);text-align:center}
+.sb-num{font-size:2.8rem;font-weight:900;line-height:1;color:var(--text);letter-spacing:-.03em}
+.sb-num.win{color:var(--green)}
+.vrd{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:center;padding:5px 12px;border-radius:999px;background:var(--bg);border:1px solid var(--border)}
+.vrd.ok{background:var(--gl);color:var(--green);border-color:#9ee5c5}
+.rst{display:block;margin:.4rem auto 0;font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);border-radius:8px;padding:5px 14px;cursor:pointer}
+.pb-wrap{max-width:820px;margin:.6rem auto 0;padding:0 1rem .4rem}
+.pb-lbl{font-size:11px;color:var(--muted);margin-bottom:3px}
+.pb{height:4px;background:var(--border);border-radius:99px;overflow:hidden}
+.pb-fill{height:100%;background:var(--gm);border-radius:99px;transition:width .3s}
+.pos-list{max-width:820px;margin:0 auto;padding:.8rem 1rem 2rem;display:flex;flex-direction:column;gap:8px}
+.ph{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 4px;margin-top:.4rem;margin-bottom:1px}
+.row{background:var(--card);border:1.5px solid var(--border);border-radius:12px;display:grid;grid-template-columns:1fr 40px 1fr;align-items:stretch;overflow:hidden}
+.row.voted{border-color:var(--gm)}
+.pb-btn{font-family:inherit;font-size:13px;font-weight:500;color:var(--text);background:none;border:none;cursor:pointer;padding:11px 12px;text-align:left;line-height:1.4;width:100%;-webkit-tap-highlight-color:transparent}
+.pb-btn.r{text-align:right}
+.pb-btn .cl{font-size:11px;color:var(--muted);display:block;margin-top:1px;font-weight:400}
+.pb-btn.win{color:var(--green);font-weight:700;background:var(--gl)}
+.pb-btn.lose{color:#b0b0a8}
+.mid{display:flex;align-items:center;justify-content:center;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+.pt{font-size:8px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.trophy{text-align:center;padding:1.5rem 1rem;display:none}
+.trophy.show{display:block}
+.ti{font-size:2.5rem;margin-bottom:.3rem}
+.tt{font-size:1.4rem;font-weight:900;color:#c8962a}
+.ts{font-size:13px;color:var(--muted);margin-top:.3rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="ey">Copa do Mundo 2026</div>
+  <h1>Disputa de Seleções</h1>
+  <p>Vote jogador por jogador — qual vence no papel?</p>
+</header>
+<div class="sel">
+  <div class="sg"><label>Seleção 1</label><select id="s1"></select></div>
+  <div class="vs">VS</div>
+  <div class="sg"><label>Seleção 2</label><select id="s2"></select></div>
+</div>
+<div class="sb">
+  <div class="sb-blk"><div class="sb-nation" id="na">—</div><div class="sb-num" id="sa">0</div></div>
+  <div>
+    <div class="vrd" id="vrd">Aguardando votos</div>
+    <div style="text-align:center;color:var(--border);margin-top:5px">·</div>
+    <button class="rst" onclick="resetVotes()">Reiniciar votos</button>
+  </div>
+  <div class="sb-blk"><div class="sb-nation" id="nb">—</div><div class="sb-num" id="sb2">0</div></div>
+</div>
+<div class="pb-wrap">
+  <div class="pb-lbl" id="pbl">0 de 0 votados</div>
+  <div class="pb"><div class="pb-fill" id="pbf" style="width:0%"></div></div>
+</div>
+<div class="pos-list" id="pos"></div>
+<div class="trophy" id="trophy"><div class="ti">🏆</div><div class="tt" id="tt"></div><div class="ts" id="ts"></div></div>
+
+<script>
+var SQUADS = {
+"Brasil":{"f":"🇧🇷","Goleiros":[["Alisson","Liverpool"],["Ederson","Fenerbahce"],["Weverton","Gremio"]],"Defensores":[["Alex Sandro","Flamengo"],["Bremer","Juventus"],["Danilo","Flamengo"],["Douglas Santos","Zenit"],["Gabriel Magalhaes","Arsenal"],["Ibanez","Al-Ahli"],["Leo Pereira","Flamengo"],["Marquinhos","PSG"]],"Meio-campistas":[["Bruno Guimaraes","Newcastle"],["Casemiro","Man United"],["Danilo Santos","Botafogo"],["Fabinho","Al-Ittihad"],["Lucas Paqueta","Flamengo"],["Ederson","Atalanta"]],"Atacantes":[["Endrick","Lyon"],["Gabriel Martinelli","Arsenal"],["Igor Thiago","Brentford"],["Luiz Henrique","Zenit"],["Matheus Cunha","Man United"],["Neymar","Santos"],["Raphinha","Barcelona"],["Rayan","Bournemouth"],["Vini Jr","Real Madrid"]]},
+"Argentina":{"f":"🇦🇷","Goleiros":[["Dibu Martinez","Aston Villa"],["Musso","Juventus"],["Rulli","Ajax"]],"Defensores":[["Tagliafico","Lyon"],["Montiel","Nottm Forest"],["Lisandro Martinez","Man United"],["Romero","Tottenham"],["Otamendi","Benfica"],["Balerdi","Olympique M."],["Molina","Atletico Madrid"]],"Meio-campistas":[["Paredes","Roma"],["De Paul","Atletico Madrid"],["MacAllister","Liverpool"],["Lo Celso","Villarreal"],["Enzo Fernandez","Chelsea"],["Barco","New England"],["Palacios","Bayer L."]],"Atacantes":[["Julian Alvarez","Atletico Madrid"],["Lionel Messi","Inter Miami"],["Nico Gonzalez","Porto"],["Thiago Almada","Lyon"],["Giuliano Simeone","Atletico M."],["Nico Paz","Como"],["Flaco Lopez","Palermo"],["Lautaro Martinez","Inter"]]},
+"Franca":{"f":"🇫🇷","Goleiros":[["Mike Maignan","Milan"],["Robin Risser","Bayer L."],["Brice Samba","Lens"]],"Defensores":[["Lucas Digne","Aston Villa"],["Malo Gusto","Chelsea"],["Lucas Hernandez","PSG"],["Theo Hernandez","Milan"],["Ibrahima Konate","Liverpool"],["Jules Kounde","Barcelona"],["William Saliba","Arsenal"],["Dayot Upamecano","Bayern"]],"Meio-campistas":[["N'Golo Kante","Al-Ittihad"],["Manu Kone","Real Madrid"],["Aurelien Tchouameni","Real Madrid"],["Adrien Rabiot","OM"],["Warren Zaire-Emery","PSG"]],"Atacantes":[["Maghnes Akliouche","Monaco"],["Bradley Barcola","PSG"],["Rayan Cherki","Man City"],["Ousmane Dembele","PSG"],["Desire Doue","PSG"],["Kylian Mbappe","Real Madrid"],["Michael Olise","Bayern"],["Marcus Thuram","Inter"],["Jean-Philippe Mateta","C. Palace"]]},
+"Espanha":{"f":"🇪🇸","Goleiros":[["Unai Simon","Athletic"],["David Raya","Arsenal"],["Joan Garcia","Espanyol"]],"Defensores":[["Marc Cucurella","Chelsea"],["Alex Grimaldo","Bayer L."],["Pau Cubarsi","Barcelona"],["Laporte","Al-Nassr"],["Pubill","Almeria"],["Eric Garcia","Girona"],["Marcos Llorente","Atletico M."],["Pedro Porro","Tottenham"]],"Meio-campistas":[["Pedri","Barcelona"],["Fabian Ruiz","PSG"],["Zubimendi","Arsenal"],["Gavi","Barcelona"],["Rodri","Man City"],["Alex Baena","Villarreal"],["Mikel Merino","Arsenal"]],"Atacantes":[["Oyarzabal","Real Sociedad"],["Dani Olmo","Barcelona"],["Nico Williams","Athletic"],["Lamine Yamal","Barcelona"],["Ferran Torres","Barcelona"],["Borja Iglesias","R. Betis"],["Victor Munoz",""]]},
+"Alemanha":{"f":"🇩🇪","Goleiros":[["Manuel Neuer","Bayern"],["Oliver Baumann","Hoffenheim"],["Alexander Nubel","Stuttgart"]],"Defensores":[["Antonio Rudiger","Real Madrid"],["Nico Schlotterbeck","Dortmund"],["Jonathan Tah","Bayer L."],["Malick Thiaw","Milan"],["Joshua Kimmich","Bayern"],["David Raum","RB Leipzig"],["Waldemar Anton","Stuttgart"],["Nathaniel Brown",""]],"Meio-campistas":[["Leon Goretzka","Bayern"],["Angelo Stiller","Stuttgart"],["Aleksandar Pavlovic","Bayern"],["Jamal Musiala","Bayern"],["Florian Wirtz","Bayer L."],["Leroy Sane","Bayern"],["Nadiem Amiri",""]],"Atacantes":[["Kai Havertz","Arsenal"],["Deniz Undav","Stuttgart"],["Maximilian Beier","Dortmund"],["Nick Woltemade","Stuttgart"]]},
+"Inglaterra":{"f":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Goleiros":[["Jordan Pickford","Everton"],["Dean Henderson","C. Palace"],["James Trafford","Burnley"]],"Defensores":[["Reece James","Chelsea"],["Ezri Konsa","Aston Villa"],["John Stones","Man City"],["Marc Guehi","C. Palace"],["Dan Burn","Newcastle"],["Antonee Robinson","Fulham"],["Djed Spence","Genoa"],["Tino Livramento",""]],"Meio-campistas":[["Declan Rice","Arsenal"],["Jude Bellingham","Real Madrid"],["Kobbie Mainoo","Man United"],["Eberechi Eze","C. Palace"],["Jordan Henderson","Ajax"],["Morgan Rogers","Aston Villa"]],"Atacantes":[["Harry Kane","Bayern"],["Bukayo Saka","Arsenal"],["Marcus Rashford","Aston Villa"],["Anthony Gordon","Newcastle"],["Ollie Watkins","Aston Villa"],["Ivan Toney","Al-Ahli"],["Noni Madueke","Chelsea"]]},
+"Portugal":{"f":"🇵🇹","Goleiros":[["Diogo Costa","Porto"],["Jose Sa","Wolves"],["Rui Silva","R. Betis"],["Ricardo Velho",""]],"Defensores":[["Diogo Dalot","Man United"],["Nelson Semedo","Wolves"],["Joao Cancelo","Barcelona"],["Nuno Mendes","PSG"],["Goncalo Inacio","Sporting"],["Renato Veiga","Chelsea"],["Ruben Dias","Man City"],["Tomas Araujo","Benfica"]],"Meio-campistas":[["Ruben Neves","Al-Hilal"],["Samu Costa","Sp. Braga"],["Joao Neves","PSG"],["Vitinha","PSG"],["Bruno Fernandes","Man United"],["Bernardo Silva","Man City"]],"Atacantes":[["Joao Felix","Chelsea"],["Francisco Trincao","Sporting"],["Francisco Conceicao","Juventus"],["Pedro Neto","Chelsea"],["Rafael Leao","Milan"],["Goncalo Ramos","PSG"],["Cristiano Ronaldo","Al-Nassr"]]},
+"Holanda":{"f":"🇳🇱","Goleiros":[["Bart Verbruggen","Brighton"],["Mark Flekken","Brentford"],["Robin Roefs",""]],"Defensores":[["Denzel Dumfries","Inter"],["Virgil van Dijk","Liverpool"],["Jan Paul van Hecke","Brighton"],["Micky van de Ven","Tottenham"],["Nathan Ake","Man City"],["Jorrel Hato","Ajax"],["Lutsharel Geertruida",""]],"Meio-campistas":[["Frenkie de Jong","Barcelona"],["Marten de Roon","Atalanta"],["Ryan Gravenberch","Liverpool"],["Teun Koopmeiners","Juventus"],["Tijjani Reijnders","Milan"],["Quinten Timber","Fulham"],["Mats Wieffer",""]],"Atacantes":[["Cody Gakpo","Liverpool"],["Memphis Depay","Corinthians"],["Donyell Malen","Dortmund"],["Noa Lang","PSV"],["Justin Kluivert",""],["Wout Weghorst",""],["Crysencio Summerville",""],["Brian Brobbey",""]]},
+"Belgica":{"f":"🇧🇪","Goleiros":[["Thibaut Courtois","Real Madrid"],["Senne Lammens",""],["Mike Penders",""]],"Defensores":[["Timothy Castagne","Fulham"],["Zeno Debast","Sporting"],["Koni De Winter",""],["Brandon Mechele",""],["Arthur Theate",""],["Maxim De Cuyper",""],["Thomas Meunier",""]],"Meio-campistas":[["Kevin De Bruyne","Man City"],["Amadou Onana","Aston Villa"],["Nicolas Raskin",""],["Youri Tielemans","Aston Villa"],["Hans Vanaken",""],["Axel Witsel",""]],"Atacantes":[["Romelu Lukaku","Napoli"],["Jeremy Doku","Man City"],["Leandro Trossard","Arsenal"],["Charles De Ketelaere","Atalanta"],["Dodi Lukebakio",""],["Alexis Saelemaekers",""]]},
+"Croacia":{"f":"🇭🇷","Goleiros":[["Dominik Livakovic",""],["Dominik Kotarski",""],["Ivor Pandur",""]],"Defensores":[["Josko Gvardiol","Man City"],["Duje Caleta-Car",""],["Josip Sutalo","Ajax"],["Josip Stanisic","Bayern"],["Marin Pongracic",""],["Luka Vuskovic","Tottenham"]],"Meio-campistas":[["Luka Modric","Milan"],["Mateo Kovacic","Man City"],["Mario Pasalic","Atalanta"],["Nikola Vlasic","Torino"],["Luka Sucic",""],["Martin Baturina",""],["Petar Sucic","Inter"],["Nikola Moro","Bologna"]],"Atacantes":[["Ivan Perisic","PSV"],["Andrej Kramaric",""],["Ante Budimir",""],["Igor Matanovic",""]]},
+"Uruguai":{"f":"🇺🇾","Goleiros":[["Sergio Rochet",""],["Fernando Muslera","Galatasaray"],["Santiago Mele",""]],"Defensores":[["Ronald Araujo","Juventus"],["Jose Maria Gimenez","Atletico M."],["Santiago Bueno",""],["Mathias Olivera","Napoli"],["Joaquin Piquerez","Palmeiras"],["Guillermo Varela",""]],"Meio-campistas":[["Manuel Ugarte","Man United"],["Rodrigo Bentancur","Tottenham"],["Federico Valverde","Real Madrid"],["Giorgian De Arrascaeta","Flamengo"],["Nicolas De La Cruz","Flamengo"],["Facundo Pellistri",""]],"Atacantes":[["Darwin Nunez","Liverpool"],["Rodrigo Aguirre",""],["Federico Vinas",""]]},
+"Colombia":{"f":"🇨🇴","Goleiros":[["Camilo Vargas",""],["David Ospina",""],["Luis Mejia",""]],"Defensores":[["Daniel Munoz","C. Palace"],["Davinson Sanchez",""],["Jhon Lucumi","Bologna"],["Johan Mojica",""],["Yerry Mina",""],["Willian Pacho",""]],"Meio-campistas":[["Richard Rios","Palmeiras"],["Jefferson Lerma",""],["James Rodriguez",""],["Jorge Carrascal",""],["Jhon Arias",""],["Juan Quintero",""]],"Atacantes":[["Luis Diaz","Liverpool"],["Cucho Hernandez","Columbus"],["Jhon Cordoba",""],["Luis Suarez",""]]},
+"Coreia do Sul":{"f":"🇰🇷","Goleiros":[["Kim Seung-gyu",""],["Jo Hyeon-woo",""],["Song Bum-keun",""]],"Defensores":[["Kim Min-jae","Bayern"],["Kim Moon-hwan",""],["Park Jin-seob",""],["Cho Wi-je",""],["Lee Ki-hyuk",""],["Lee Han-beom",""]],"Meio-campistas":[["Lee Kang-in","PSG"],["Bae Jun-ho",""],["Hwang In-beom",""],["Lee Jae-sung",""],["Yang Hyun-jun",""],["Hwang Hee-chan",""]],"Atacantes":[["Son Heung-min","Tottenham"],["Oh Hyeong-yu",""],["Cho Gue-sung",""]]},
+"Japao":{"f":"🇯🇵","Goleiros":[["Zion Suzuki",""],["Tomoki Hayakawa",""],["Keisuke Osako",""]],"Defensores":[["Ko Itakura",""],["Shogo Taniguchi",""],["Hiroki Ito","Stuttgart"],["Takehiro Tomiyasu","Arsenal"],["Yukinari Sugawara",""]],"Meio-campistas":[["Wataru Endo","Liverpool"],["Ao Tanaka","Leeds"],["Daichi Kamada","C. Palace"],["Ritsu Doan",""],["Takefusa Kubo","R. Sociedad"],["Kaishu Sano",""]],"Atacantes":[["Ayase Ueda",""],["Koki Ogawa",""],["Daizen Maeda","Celtic"]]},
+"Mexico":{"f":"🇲🇽","Goleiros":[["Guillermo Ochoa",""],["Carlos Acevedo",""],["Raul Rangel",""]],"Defensores":[["Jorge Sanchez","Porto"],["Edson Alvarez","West Ham"],["Cesar Montes",""],["Johan Vasquez",""],["Jesus Gallardo",""],["Israel Reyes",""]],"Meio-campistas":[["Alvaro Fidalgo",""],["Luis Chavez",""],["Orbelin Pineda",""],["Luis Romo",""],["Obed Vargas",""]],"Atacantes":[["Santiago Gimenez","Milan"],["Raul Jimenez","Fulham"],["Santiago Gimenez","Milan"],["Alexis Vega",""],["Cesar Huerta",""],["Roberto Alvarado",""]]},
+"EUA":{"f":"🇺🇸","Goleiros":[["Matt Turner",""],["Matt Freese",""],["Chris Brady",""]],"Defensores":[["Antonee Robinson","Fulham"],["Sergi Dest","PSV"],["Tim Ream","Fulham"],["Mark McKenzie",""],["Auston Trusty",""],["Joe Scally",""],["Chris Richards",""]],"Meio-campistas":[["Tyler Adams",""],["Weston McKennie","Juventus"],["Cristian Roldan",""],["Gio Reyna",""],["Brenden Aaronson",""]],"Atacantes":[["Christian Pulisic","Milan"],["Folarin Balogun","Monaco"],["Ricardo Pepi","PSV"],["Tim Weah","Juventus"],["Haji Wright",""],["Alex Zendejas",""]]},
+"Canada":{"f":"🇨🇦","Goleiros":[["Dayne St. Clair",""],["Maxime Crepeau",""],["Owen Goodman",""]],"Defensores":[["Alphonso Davies","Real Madrid"],["Alistair Johnston","Celtic"],["Richie Laryea",""],["Moise Bombito",""],["Derek Cornelius",""],["Joel Waterman",""]],"Meio-campistas":[["Stephen Eustaquio","FC Porto"],["Ismael Kone",""],["Jonathan Osorio",""],["Tajon Buchanan",""],["Mathieu Choiniere",""]],"Atacantes":[["Jonathan David","LOSC Lille"],["Cyle Larin",""],["Jacob Shaffelburg",""],["Promise David",""],["Tani Oluwaseyi",""]]},
+"Marrocos":{"f":"🇲🇦","Goleiros":[["Yassine Bounou","Al-Hilal"],["Munir El Kajoui",""],["Ahmed Tagnaouti",""]],"Defensores":[["Achraf Hakimi","PSG"],["Noussair Mazraoui","Man United"],["Nayef Aguerd",""],["Issa Diop","Fulham"],["Chadi Riad",""],["Zakaria El Ouahdi",""]],"Meio-campistas":[["Sofyan Amrabat",""],["Bilal El Khannouss",""],["Ismail Saibari","PSV"],["Neil El Aynaoui",""],["Azzedine Ounahi",""]],"Atacantes":[["Achraf Hakimi","PSG"],["Brahim Diaz","Real Madrid"],["Abdessamad Ezzalzouli",""],["Soufiane Rahimi",""],["Ayoub El Kaabi",""]]},
+"Senegal":{"f":"🇸🇳","Goleiros":[["Edouard Mendy",""],["Yehvann Diouf",""],["Mory Diaw",""]],"Defensores":[["Kalidou Koulibaly",""],["Moussa Niakhate",""],["Mamadou Sarr","Chelsea"],["Krepin Diatta","Monaco"],["Ismail Jakobs","Monaco"],["El-Hadji Malick Diouf",""]],"Meio-campistas":[["Idrissa Gueye",""],["Pape Matar Sarr","Tottenham"],["Lamine Camara","Monaco"],["Pape Gueye",""],["Habib Diarra",""]],"Atacantes":[["Sadio Mane","Al-Nassr"],["Nicolas Jackson","Chelsea"],["Iliman Ndiaye",""],["Ismaila Sarr",""],["Bamba Dieng",""]]},
+"Noruega":{"f":"🇳🇴","Goleiros":[["Orjan Nyland",""],["Egil Selvik",""],["Sander Tangvik",""]],"Defensores":[["Kristoffer Ajer",""],["Leo Ostigard","Napoli"],["Julian Ryerson","Dortmund"],["Fredrik Bjorkan",""],["Marcus Holmgren Pedersen",""]],"Meio-campistas":[["Martin Odegaard","Arsenal"],["Sander Berge",""],["Fredrik Aursnes",""],["Patrick Berg",""],["Kristian Thorstvedt",""],["Morten Thorsby",""]],"Atacantes":[["Erling Haaland","Man City"],["Alexander Sorloth",""],["Jorgen Strand Larsen",""],["Antonio Nusa",""],["Oscar Bobb","Man City"]]},
+"Suica":{"f":"🇨🇭","Goleiros":[["Gregor Kobel","Dortmund"],["Yvon Mvogo",""],["Marvin Keller",""]],"Defensores":[["Manuel Akanji","Man City"],["Nico Elvedi",""],["Eray Comert",""],["Ricardo Rodriguez",""],["Silvan Widmer",""],["Miro Muheim",""]],"Meio-campistas":[["Granit Xhaka",""],["Remo Freuler",""],["Denis Zakaria",""],["Djibril Sow",""],["Ardon Jashari",""],["Fabian Rieder",""]],"Atacantes":[["Breel Embolo",""],["Noah Okahar",""],["Dan Ndoye",""],["Zeki Amdouni",""],["Ruben Vargas",""],["Christian Fassnacht",""]]},
+"Turquia":{"f":"🇹🇷","Goleiros":[["Altay Bayindir","Man United"],["Mert Gunok",""],["Ugurcan Cakir",""]],"Defensores":[["Zeki Celik","Roma"],["Ferdi Kadioglu",""],["Merih Demiral",""],["Abdulkerim Bardakci",""],["Ozan Kabak",""],["Samet Akaydin",""]],"Meio-campistas":[["Hakan Calhanoglu","Inter"],["Orkun Kokcu","Benfica"],["Kaan Ayhan",""],["Ismail Yuksek",""],["Salih Ozcan",""]],"Atacantes":[["Arda Guler","Real Madrid"],["Kenan Yildiz","Juventus"],["Kerem Akturkoglu",""],["Baris Alper Yilmaz",""],["Can Uzun",""]]},
+"Equador":{"f":"🇪🇨","Goleiros":[["Hernan Galindez",""],["Moises Ramirez",""],["Gonzalo Valle",""]],"Defensores":[["Pervis Estupinan",""],["Piero Hincapie",""],["Felix Torres",""],["Jackson Porozo",""],["Angelo Preciado",""],["Joel Ordonez",""]],"Meio-campistas":[["Moises Caicedo","Chelsea"],["Alan Franco",""],["Kendry Paez",""],["Pedro Vite",""],["Denil Castillo",""],["Yaimar Medina",""]],"Atacantes":[["Enner Valencia",""],["Gonzalo Plata",""],["Kevin Rodriguez",""],["John Yeboah",""],["Anthony Valencia",""]]},
+"Paraguai":{"f":"🇵🇾","Goleiros":[["Gatito Fernandez",""],["Orlando Gill",""],["Gaston Olveira",""]],"Defensores":[["Fabian Balbuena",""],["Gustavo Gomez",""],["Omar Alderete",""],["Junior Alonso",""],["Juan Jose Caceres",""],["Gustavo Velazquez",""]],"Meio-campistas":[["Braian Ojeda",""],["Andres Cubas",""],["Diego Gomez",""],["Ramon Sosa",""],["Alejandro Gamarra",""],["Matias Galarza",""]],"Atacantes":[["Miguel Almeron",""],["Julio Enciso","Brighton"],["Gabriel Avalos",""],["Antonio Sanabria",""],["Alex Arce",""]]},
+"Bosnia":{"f":"🇧🇦","Goleiros":[["Nikola Vasilj",""],["Martin Zlomislic",""],["Mladen Jurkas",""]],"Defensores":[["Sead Kolasinac","Atalanta"],["Amar Dedic","Benfica"],["Nikola Katic",""],["Tarik Muharemovic",""],["Dennis Hadzikadunic",""]],"Meio-campistas":[["Amir Hadziahmetovic",""],["Ivan Sunjic",""],["Benjamin Tahirovic",""],["Dzenis Burnic",""],["Esmir Bajraktarevic","PSV"]],"Atacantes":[["Ermedin Demirovic","Stuttgart"],["Haris Tabakovic",""],["Edin Dzeko",""],["Jovo Lukic",""]]},
+"Costa do Marfim":{"f":"🇨🇮","Goleiros":[["Yahia Fofana",""],["Mohamed Kone",""],["Alban Lafont",""]],"Defensores":[["Emmanuel Agbadou",""],["Ousmane Diomande",""],["Evan Ndicka",""],["Odilon Kossounou",""],["Wilfried Singo",""],["Ghislain Konan",""]],"Meio-campistas":[["Franck Kessie",""],["Seko Fofana",""],["Ibrahim Sangare",""],["Jean Michael Seri",""]],"Atacantes":[["Amad Diallo","Man United"],["Simon Adingra","Brighton"],["Nicolas Pepe",""],["Elye Wahi",""],["Ange-Yoan Bonny",""],["Oumar Diakite",""]]},
+"Gana":{"f":"🇬🇭","Goleiros":[["Lawrence Ati-Zigi",""],["Joseph Anang",""],["Benjamin Asare",""]],"Defensores":[["Alexander Djiku",""],["Abdul Mumin",""],["Alidu Seidu",""],["Gideon Mensah",""],["Baba Rahman",""]],"Meio-campistas":[["Thomas Partey","Arsenal"],["Elisha Owusu",""],["Abdul Fatawu Issahaku",""],["Mohammed Kudus","West Ham"]],"Atacantes":[["Iñaki Williams","Athletic"],["Jordan Ayew",""],["Antoine Semenyo",""],["Ernest Nuamah",""],["Brandon Thomas-Asante",""]]},
+"Escocia":{"f":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Goleiros":[["Craig Gordon",""],["Angus Gunn",""],["Liam Kelly",""]],"Defensores":[["Andy Robertson","Liverpool"],["Kieran Tierney","Arsenal"],["Aaron Hickey",""],["Grant Hanley",""],["Jack Hendry",""],["Scott McKenna",""]],"Meio-campistas":[["Scott McTominay","Napoli"],["John McGinn",""],["Ryan Christie",""],["Lewis Ferguson",""],["Kenny McLean",""]],"Atacantes":[["Lawrence Shankland",""],["Che Adams",""],["Lyndon Dykes",""],["Ross Stewart",""]]},
+"Suecia":{"f":"🇸🇪","Goleiros":[["Viktor Johansson",""],["Kristoffer Nordfeldt",""],["Jacob Widell Zetterstrom",""]],"Defensores":[["Victor Lindelof","Aston Villa"],["Isak Hien","Atalanta"],["Carl Starfelt",""],["Daniel Svensson","Dortmund"],["Gabriel Gudmundsson",""],["Hjalmar Ekdal",""]],"Meio-campistas":[["Lucas Bergvall","Tottenham"],["Yasin Ayari","Brighton"],["Jesper Karlstrom",""],["Mattias Svanberg",""],["Besfort Zeneli",""]],"Atacantes":[["Viktor Gyokeres","Arsenal"],["Alexander Isak","Liverpool"],["Anthony Elanga","Newcastle"],["Alexander Bernhardsson",""],["Gustaf Nilsson",""]]},
+"Argelia":{"f":"🇩🇿","Goleiros":[["Oussama Benbot",""],["Luca Zidane",""],["Abdelatif Ramdane",""]],"Defensores":[["Rayan Ait-Nouri",""],["Ramy Bensebaini",""],["Aissa Mandi",""],["Jaouen Hadjam",""],["Rafik Belghali",""],["Samir Chergui",""]],"Meio-campistas":[["Houssem Aouar",""],["Ramiz Zerrouki",""],["Fares Chaibi",""],["Ibrahim Maza",""],["Nabil Bentaleb",""]],"Atacantes":[["Riyad Mahrez",""],["Mohamed Amoura",""],["Nadhir Benbouali",""],["Anis Hadj Moussa",""],["Fares Ghedjemis",""]]},
+"Austria":{"f":"🇦🇹","Goleiros":[["Patrick Pentz",""],["Alexander Schlager",""],["Florian Wiegle",""]],"Defensores":[["David Alaba","Real Madrid"],["Kevin Danso",""],["Stefan Posch",""],["Philipp Lienhart",""],["Marco Friedl",""],["Alexander Prass",""]],"Meio-campistas":[["Konrad Laimer","Bayern"],["Marcel Sabitzer",""],["Nicolas Seiwald",""],["Xavier Schlager",""],["Romano Schmid",""],["Carney Chukwuemeka",""],["Paul Wanner",""]],"Atacantes":[["Marko Arnautovic",""],["Michael Gregoritsch",""],["Sasa Kalajdzic",""]]},
+"Egito":{"f":"🇪🇬","Goleiros":[["Mohamed El Shenawy",""],["Mostafa Shobeir",""],["El Mahdy Soliman",""]],"Defensores":[["Mohamed Hany",""],["Tarek Alaa",""],["Hamdi Fathi",""],["Ramy Rabia",""],["Karim Hafez",""]],"Meio-campistas":[["Mohamed Salah","Liverpool"],["Mahmoud Trezeguet",""],["Ahmed Sayed Zizo",""],["Emam Ashour",""],["Nabil Emad Dunga",""],["Ibrahim Adel",""]],"Atacantes":[["Omar Marmoush","Man City"],["Akram Afif",""],["Hamza Abdel Karim",""]]},
+"Catar":{"f":"🇶🇦","Goleiros":[["Meshaal Barsham",""],["Salah Zakaria",""],["Mahmoud Abunada",""]],"Defensores":[["Pedro Miguel",""],["Lucas Mendes",""],["Sultan Al Brake",""],["Hassan Tambakti",""],["Mohammed Waad",""]],"Meio-campistas":[["Abdulaziz Hatem",""],["Karim Boudiaf",""],["Assim Madibo",""],["Mohammed Mannai",""],["Jassim Gaber",""]],"Atacantes":[["Akram Afif",""],["Almoez Ali",""],["Edmilson Junior",""],["Hassan Al-Haydos",""],["Mohammed Muntari",""]]},
+"Ira":{"f":"🇮🇷","Goleiros":[["Alireza Beiranvand",""],["Seyed Hossein Hosseini",""],["Payam Niazmand",""]],"Defensores":[["Ehsan Hajsafi",""],["Milad Mohammadi",""],["Shoja Khalilzadeh",""],["Hossein Kanaani",""],["Ramin Rezaeian",""],["Danial Eiri",""]],"Meio-campistas":[["Saeid Ezatolahi",""],["Alireza Jahanbakhsh",""],["Saman Ghoddos",""],["Mehdi Torabi",""],["Mehdi Ghaedi",""]],"Atacantes":[["Mehdi Taremi","Inter"],["Ali Alipour",""],["Amirhossein Hosseinzadeh",""],["Ali Al-Hamadi",""]]},
+"Arabia Saudita":{"f":"🇸🇦","Goleiros":[["Mohammed Al Owais",""],["Ahmed Al Kassar",""],["Nawaf Al Aqidi",""]],"Defensores":[["Saud Abdulhamid","Roma"],["Nawaf Boushal",""],["Hassan Tambakti",""],["Ali Lajami",""],["Hassan Kadesh",""],["Ali Majrashi",""]],"Meio-campistas":[["Mohammed Kanno",""],["Nasser Al Dawsari",""],["Sultan Mandash",""],["Abdullah Al Khaibari",""],["Musab Al Juwayr",""]],"Atacantes":[["Salem Al Dawsari",""],["Feras Al Brikan",""],["Abdullah Al Hamdan",""],["Saleh Al Shehri",""]]},
+"Africa do Sul":{"f":"🇿🇦","Goleiros":[["Ronwen Williams",""],["Ricardo Goss",""],["Sipho Chaine",""]],"Defensores":[["Khuliso Mudau",""],["Nkosinathi Sibisi",""],["Aubrey Modiba",""],["Samukelo Kabini",""],["Bradley Cross",""]],"Meio-campistas":[["Teboho Mokoena",""],["Thalente Mbatha",""],["Jayden Adams",""],["Sphephelo Sithole",""]],"Atacantes":[["Oswin Appollis",""],["Iqraam Rayners",""],["Evidence Makgopa",""],["Relebohile Mofokeng",""],["Lyle Foster",""],["Themba Zwane",""]]},
+"Nova Zelandia":{"f":"🇳🇿","Goleiros":[["Maty Ryan","R. Sociedad"],["Alex Paulsen",""],["Michael Wood",""]],"Defensores":[["Michael Boxall",""],["Liberato Cacace",""],["Tommy Smith",""],["Nando Pijnaker",""],["Tim Payne",""],["Tyler Bindon",""]],"Meio-campistas":[["Joe Bell",""],["Alex Rufer",""],["Marko Stamenic",""],["Ryan Thomas",""]],"Atacantes":[["Chris Wood","Nottm Forest"],["Callum McCowatt",""],["Ben Old",""],["Kosta Barbarouses",""],["Sarpreet Singh",""],["Matt Garbett",""]]},
+"Panama":{"f":"🇵🇦","Goleiros":[["Orlando Mosquera",""],["Luis Mejia",""],["Cesar Samudio",""]],"Defensores":[["Amir Murillo",""],["Fidel Escobar",""],["Andres Andrade",""],["Jose Cordoba",""],["Eric Davis",""],["Roderick Miller",""]],"Meio-campistas":[["Anibal Godoy",""],["Adalberto Carrasquilla",""],["Carlos Harvey",""],["Cesar Yanis",""],["Yoel Barcenas",""]],"Atacantes":[["Ismael Diaz",""],["Cecilio Waterman",""],["Jose Fajardo",""],["Tomas Rodriguez",""]]},
+"Haiti":{"f":"🇭🇹","Goleiros":[["Johnny Placide",""],["Alexandre Pierre",""],["Josue Duverger",""]],"Defensores":[["Carlens Arcus",""],["Duke Lacroix",""],["JK Duverne",""],["Martin Experience",""],["Wilguens Pauguain",""]],"Meio-campistas":[["Jeanricner Bellegarde",""],["Carl-Fred Sainthe",""],["Leverton Pierre",""],["Dominique Simon",""]],"Atacantes":[["Wilson Isidor",""],["Duckens Nazon",""],["Derrick Etienne",""],["Frantzdy Pierrot",""]]},
+"RD Congo":{"f":"🇨🇩","Goleiros":[["Lionel Mpasi",""],["Timothy Fayulu",""],["Matthieu Epolo",""]],"Defensores":[["Aaron Wan-Bissaka","Man United"],["Gedeon Kalulu",""],["Arthur Masuaku",""],["Chancel Mbemba",""],["Dylan Batubinsika",""],["Axel Tuanzebe",""]],"Meio-campistas":[["Theo Bongonda",""],["Nathanael Mbuku",""],["Samuel Moutoussamy",""],["Ngal'ayel Mukau",""],["Edo Kayembe",""],["Gael Kakuta",""]],"Atacantes":[["Yoane Wissa","Brentford"],["Simon Banza",""],["Cedric Bakambu",""],["Fiston Mayele",""],["Meschack Elia",""]]},
+"Uzbequistao":{"f":"🇺🇿","Goleiros":[["Otkir Yusupov",""],["Abduvohid Nematov",""],["Botirali Ergashev",""]],"Defensores":[["Abdukodir Husanov","Man City"],["Farruh Sayfiyev",""],["Rustam Ashurmatov",""],["Sherzod Nasrullayev",""],["Avazbek Olmasaliyev",""],["Jahongir Orozov",""]],"Meio-campistas":[["Oston Urunov",""],["Odil Hamrobekov",""],["Jaloliddin Masharipov",""],["Abbosbek Fayzullayev",""],["Aziz Ganiyev",""],["Dostonbek Hamdamov",""]],"Atacantes":[["Eldor Shomurodov",""],["Igor Sergeyev",""],["Azizbek Omonov",""]]},
+"Jordania":{"f":"🇯🇴","Goleiros":[["Yazeed Abu Laila",""],["Abdullah Al-Fakhouri",""],["Nour Bani Attiah",""]],"Defensores":[["Saed Al-Rosan",""],["Yazan Al-Arab",""],["Abdallah Nasib",""],["Saleem Obaid",""],["Husam Abu Dahab",""],["Ihsan Haddad",""]],"Meio-campistas":[["Nour Al-Rawabdeh",""],["Amer Jamous",""],["Ibrahim Sadeh",""],["Mohammad Al-Dawoud",""],["Rajaei Ayed",""]],"Atacantes":[["Musa Al-Taamari",""],["Ali Al-Azaizeh",""],["Mahmoud Al-Mardi",""],["Mohammad Abu Zrayq",""],["Ali Olwan",""]]},
+"Iraque":{"f":"🇮🇶","Goleiros":[["Fahad Talib",""],["Jalal Hassan",""],["Ahmed Basil",""]],"Defensores":[["Rebin Sulaka",""],["Mustafa Saadoon",""],["Merchas Doski",""],["Hussein Ali",""],["Zaid Tahseen",""],["Akam Hashim",""]],"Meio-campistas":[["Zidane Iqbal",""],["Kevin Yakob",""],["Amir Al-Ammari",""],["Ahmed Qasem",""],["Ibrahim Bayesh",""]],"Atacantes":[["Ali Jassim",""],["Ali Al-Hamadi",""],["Aymen Hussein",""],["Mohanad Ali",""]]},
+"Tunisia":{"f":"🇹🇳","Goleiros":[["Aymen Dahmen",""],["Sabri Ben Hassen",""],["Abdelmouhib Chamakh",""]],"Defensores":[["Montassar Talbi",""],["Dylan Bronn",""],["Omar Rekik",""],["Adem Arous",""],["Ali Abdi",""],["Yan Valery",""]],"Meio-campistas":[["Ellyes Skhiri",""],["Hannibal",""],["Anis Ben Slimane",""],["Mortadha Ben Ouanes",""],["Ismael Gharbi",""]],"Atacantes":[["Khalil Ayari","PSG"],["Sebastian Tounekti","Celtic"],["Elias Saad",""],["Hazem Mastouri",""],["Rayan Elloumi",""]]},
+"Tchecia":{"f":"🇨🇿","Goleiros":[["Matej Kovar",""],["Jindrich Stanek",""],["Lukas Hornicek",""]],"Defensores":[["Vladimir Coufal",""],["David Jurasek",""],["Robin Hranac",""],["Ladislav Krejci",""],["David Zima",""],["Tomas Holes",""]],"Meio-campistas":[["Tomas Soucek","West Ham"],["Lukas Provod",""],["Michal Sadilek",""],["Hugo Sochurek",""],["Denis Visinsky",""]],"Atacantes":[["Patrik Schick",""],["Adam Hlozek",""],["Mojmir Chytil",""],["Tomas Chory",""],["Jan Kuchta",""]]},
+"Cabo Verde":{"f":"🇨🇻","Goleiros":[["Josimar Dias",""],["Marcio da Rosa",""],["Carlos Santos",""]],"Defensores":[["Logan Costa",""],["Roberto Lopes",""],["Steven Moreira",""],["Wagner Pina",""],["Kelvin Pires",""],["Ianique Tavares",""]],"Meio-campistas":[["Jamiro Monteiro",""],["Laros Duarte",""],["Kevin Pina",""],["Yannick Semedo",""],["Telmo Arcanjo",""]],"Atacantes":[["Garry Rodrigues",""],["Jovane Cabral",""],["Ryan Mendes",""],["Nuno da Costa",""],["Dailon Livramento",""]]},
+"Curacao":{"f":"🇨🇼","Goleiros":[["Eloy Room",""],["Trevor Doornbusch",""],["Tyrick Bodak",""]],"Defensores":[["Riechedly Bazoer",""],["Joshua Brenet",""],["Armando Obispo",""],["Shurandy Sambo",""],["Sherel Floranus",""],["Jurien Gaari",""]],"Meio-campistas":[["Juninho Bacuna",""],["Leandro Bacuna",""],["Livano Comenencia",""],["Tyrese Noslin",""],["Arjany Martha",""]],"Atacantes":[["Tahith Chong",""],["Sontje Hansen",""],["Kenji Gorre",""],["Brandley Kuwas",""],["Juergen Locadia",""],["Jearl Margaritha",""]]}
+};
+
+var posOrder = ["Goleiros","Defensores","Meio-campistas","Atacantes"];
+var votes = {};
+
+function buildSelects() {
+  var keys = Object.keys(SQUADS);
+  var s1 = document.getElementById('s1');
+  var s2 = document.getElementById('s2');
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    var flag = SQUADS[k].f;
+    var o1 = document.createElement('option'); o1.value = k; o1.textContent = flag + ' ' + k; s1.appendChild(o1);
+    var o2 = document.createElement('option'); o2.value = k; o2.textContent = flag + ' ' + k; s2.appendChild(o2);
+  }
+  s1.value = 'Brasil';
+  s2.value = 'Argentina';
+  s1.addEventListener('change', function(){ votes={}; render(); });
+  s2.addEventListener('change', function(){ votes={}; render(); });
+}
+
+function vote(key, side) { votes[key] = side; render(); }
+function resetVotes() { votes = {}; render(); }
+
+function render() {
+  var na = document.getElementById('s1').value;
+  var nb = document.getElementById('s2').value;
+  var sa = SQUADS[na];
+  var sb = SQUADS[nb];
+  var fa = sa.f; var fb = sb.f;
+  document.getElementById('na').textContent = fa + ' ' + na;
+  document.getElementById('nb').textContent = fb + ' ' + nb;
+
+  var scoreA = 0; var scoreB = 0; var total = 0;
+  var container = document.getElementById('pos');
+  container.innerHTML = '';
+
+  for (var pi = 0; pi < posOrder.length; pi++) {
+    var pos = posOrder[pi];
+    var pa = sa[pos] || [];
+    var pb = sb[pos] || [];
+    if (pa.length === 0 && pb.length === 0) continue;
+
+    var hdr = document.createElement('div');
+    hdr.className = 'ph';
+    hdr.textContent = pos;
+    container.appendChild(hdr);
+
+    var maxLen = pa.length > pb.length ? pa.length : pb.length;
+    for (var i = 0; i < maxLen; i++) {
+      var key = pos + '_' + i;
+      var playerA = pa[i] || null;
+      var playerB = pb[i] || null;
+      if (!playerA && !playerB) continue;
+      total++;
+      var voted = votes[key] || null;
+      if (voted === 'a') scoreA++;
+      if (voted === 'b') scoreB++;
+
+      var row = document.createElement('div');
+      row.className = voted ? 'row voted' : 'row';
+
+      // Button A
+      var btnA = document.createElement('button');
+      var classA = 'pb-btn';
+      if (voted === 'a') classA += ' win';
+      else if (voted === 'b') classA += ' lose';
+      btnA.className = classA;
+      if (playerA) {
+        btnA.innerHTML = playerA[0] + (playerA[1] ? '<span class="cl">' + playerA[1] + '</span>' : '');
+        (function(k){ btnA.addEventListener('click', function(){ vote(k,'a'); }); })(key);
+      } else {
+        btnA.innerHTML = '<span style="color:var(--muted);font-size:11px">—</span>';
+        btnA.disabled = true;
+      }
+
+      // Middle
+      var mid = document.createElement('div');
+      mid.className = 'mid';
+      var ptag = document.createElement('span');
+      ptag.className = 'pt';
+      ptag.textContent = i === 0 ? pos.substring(0,3) : '#' + (i+1);
+      mid.appendChild(ptag);
+
+      // Button B
+      var btnB = document.createElement('button');
+      var classB = 'pb-btn r';
+      if (voted === 'b') classB += ' win';
+      else if (voted === 'a') classB += ' lose';
+      btnB.className = classB;
+      if (playerB) {
+        btnB.innerHTML = playerB[0] + (playerB[1] ? '<span class="cl">' + playerB[1] + '</span>' : '');
+        (function(k){ btnB.addEventListener('click', function(){ vote(k,'b'); }); })(key);
+      } else {
+        btnB.innerHTML = '<span style="color:var(--muted);font-size:11px">—</span>';
+        btnB.disabled = true;
+      }
+
+      row.appendChild(btnA);
+      row.appendChild(mid);
+      row.appendChild(btnB);
+      container.appendChild(row);
+    }
+  }
+
+  var elA = document.getElementById('sa');
+  var elB = document.getElementById('sb2');
+  elA.textContent = scoreA;
+  elB.textContent = scoreB;
+  elA.className = scoreA > scoreB ? 'sb-num win' : 'sb-num';
+  elB.className = scoreB > scoreA ? 'sb-num win' : 'sb-num';
+
+  var votedCount = Object.keys(votes).length;
+  var pct = total > 0 ? Math.round(votedCount / total * 100) : 0;
+  document.getElementById('pbl').textContent = votedCount + ' de ' + total + ' jogadores votados';
+  document.getElementById('pbf').style.width = pct + '%';
+
+  var vrdEl = document.getElementById('vrd');
+  var trophy = document.getElementById('trophy');
+
+  if (votedCount === 0) {
+    vrdEl.textContent = 'Aguardando votos';
+    vrdEl.className = 'vrd';
+    trophy.className = 'trophy';
+  } else if (votedCount < total) {
+    vrdEl.textContent = pct + '% votado';
+    vrdEl.className = 'vrd';
+    trophy.className = 'trophy';
+  } else {
+    var winner = scoreA > scoreB ? na : scoreB > scoreA ? nb : null;
+    var winnerFlag = winner ? SQUADS[winner].f : '';
+    if (winner) {
+      vrdEl.textContent = winnerFlag + ' ' + winner + ' vence!';
+      vrdEl.className = 'vrd ok';
+      document.getElementById('tt').textContent = winnerFlag + ' ' + winner + ' vence no papel!';
+    } else {
+      vrdEl.textContent = 'Empate!';
+      vrdEl.className = 'vrd ok';
+      document.getElementById('tt').textContent = 'Empate tecnico!';
+    }
+    document.getElementById('ts').textContent = 'Placar: ' + na + ' ' + scoreA + ' x ' + scoreB + ' ' + nb;
+    trophy.className = 'trophy show';
+  }
+}
+
+buildSelects();
+render();
+</script>
+</body>
+</html>
